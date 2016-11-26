@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style type="text/css">
+body {
+    color: white; 
+	background-image: url("Sky.jpg");
+    background-color: #cccccc;
+	background-size: 100%, 100%;
+}
+
+h1 {
+      font-family: arial, sans-serif;
+}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+}
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+p {
+    color: white;
+	font-family: arial, sans-serif;
+}
+  </style>
+  </head>
+
+  <body>   
+  
+  <script src="jquery-2.1.4.min.js"></script>
+  <h1>OpenWeatherMap API Tester</h1>
+  
+  
+  <table id = "table">
+  
+    <tr>
+	    <th>Location</th>
+		<th>Temperature [C]</th>
+		<th>Weather</th>
+		<th>Humidity [%]</th>
+		<th>Pressure [mbar]</th>
+    </tr>
+	
+<table id = "forecast">
+    <tr>
+	    <th>Date/Time</th>
+	    <th>Location</th>
+		<th>Temperature [C]</th>
+		<th>Weather</th>
+		<th>Humidity [%]</th>
+		<th>Pressure [mbar]</th>
+    </tr>	
+
+	
+	<p id = "checker">  </p>
+
+	
+	<script>
+	
+	var apiKey = /*INSERT OWM API KEY HERE*/ ""
+	var urlGetter = function(city, countryKey, apiKey, type)	{
+	var x = "http://api.openweathermap.org/data/2.5/" + type + "?q=" + city + "," + countryKey + "&APPID=" + apiKey + "&units=metric";
+	console.log(x);
+	return x;
+	
+	}
+	
+	
+	
+    $.ajax ({
+        url : urlGetter("Dublin", "IE", apiKey, "weather"),
+        type : 'get',
+        success : function(data) {
+            document.getElementById("checker").innerHTML = "API request confirmed";
+			
+			var location = data.name;
+			var temp = data.main.temp;
+			var hum = data.main.humidity;
+			var pressure = data.main.pressure;
+			var weather = data.weather[0].main;
+            var table = document.getElementById("table");
+			var row = table.insertRow(1);
+			var cell1 = row.insertCell(0);
+			cell1.innerHTML = location;
+			var cell2 = row.insertCell(1);
+			cell2.innerHTML = temp;
+			var cell3 = row.insertCell(2);
+			cell3.innerHTML = weather;
+			var cell4 = row.insertCell(3);
+			cell4.innerHTML = hum;
+			var cell5 = row.insertCell(4);
+			cell5.innerHTML = pressure;
+        },
+        error : function() {
+            document.getElementById("checker").innerHTML = "API request was unsuccessful";
+			
+
+        }
+    });
+	
+	
+	
+	    $.ajax ({
+        url : urlGetter("Dublin", "IE", apiKey, "forecast"),
+        type : 'get',
+        success : function(data) {
+			
+            var table = document.getElementById("forecast");
+			
+			for (var i = 0; i < 36; i++) {
+			
+				var timestamp = data.list[i].dt_txt;
+				var location = data.city.name;
+				var temp = data.list[i].main.temp;
+				var hum = data.list[i].main.humidity;
+				var pressure = data.list[i].main.pressure;
+				var weather = data.list[i].weather[0].main;
+				
+				var row = table.insertRow(i+1);
+				
+				var cell1 = row.insertCell(0);
+				cell1.innerHTML = timestamp;
+				var cell2 = row.insertCell(1);
+				cell2.innerHTML = location;
+				var cell3 = row.insertCell(2);
+				cell3.innerHTML = temp;
+				var cell4 = row.insertCell(3);
+				cell4.innerHTML = weather;
+				var cell5 = row.insertCell(4);
+				cell5.innerHTML = hum;
+				var cell5 = row.insertCell(5);
+				cell5.innerHTML = pressure;
+			};
+        },
+        error : function() {
+            console.log("Forecast failed.");
+			
+
+        }
+    });
+  </script>
+  </body>
+ </head>
+ </html>
